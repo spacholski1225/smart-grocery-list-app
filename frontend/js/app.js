@@ -4,7 +4,7 @@ class GroceryListApp {
         this.currentListId = null;
         this.currentItemId = null;
         this.selectedListId = null;
-        this.apiBaseUrl = 'http://localhost:8000/api/v1';
+        this.apiBaseUrl = `http://${window.location.hostname}:8000/api/v1`;
         this.init();
     }
 
@@ -81,21 +81,15 @@ class GroceryListApp {
 
         return `
             <button onclick="app.selectList(${list.id})" 
-                    class="flex-shrink-0 px-4 py-2 rounded-t-lg transition-all duration-200 border-b-2 mobile-touch-target ${isActive ? 
+                    class="flex-shrink-0 px-3 sm:px-4 py-3 rounded-lg sm:rounded-t-lg sm:rounded-b-none transition-all duration-200 border-b-2 mobile-touch-target ${isActive ? 
                         'bg-gradient-to-r from-' + typeColor + ' to-gray-700 text-white border-' + typeColor : 
                         'bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white border-transparent'
                     }">
-                <div class="flex items-center gap-2">
+                <div class="flex flex-col items-center sm:flex-row sm:items-center gap-1 sm:gap-2">
                     <span class="font-medium text-sm whitespace-nowrap">${list.name}</span>
-                    <span class="text-xs bg-${typeColor} bg-opacity-20 text-${typeColor} px-2 py-0.5 rounded">
+                    <span class="text-xs bg-${typeColor} bg-opacity-20 text-${typeColor} px-2 py-1 rounded-full">
                         ${completedCount}/${totalCount}
                     </span>
-                    <div class="flex gap-1 ml-1">
-                        <button onclick="event.stopPropagation(); app.editList(${list.id})" 
-                                class="text-xs hover:text-neon-blue transition-colors mobile-touch-target min-w-[44px] min-h-[44px] flex items-center justify-center">✏️</button>
-                        <button onclick="event.stopPropagation(); app.deleteList(${list.id})" 
-                                class="text-xs hover:text-red-400 transition-colors mobile-touch-target min-w-[44px] min-h-[44px] flex items-center justify-center">🗑️</button>
-                    </div>
                 </div>
             </button>
         `;
@@ -145,41 +139,49 @@ class GroceryListApp {
         ` : '';
 
         return `
-            <div class="bg-card-bg rounded-lg p-8 shadow-xl border border-gray-700 min-h-screen">
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                        <h3 class="text-3xl font-bold text-white mb-2 mobile-text-2xl">${list.name}</h3>
-                        <span class="inline-block px-3 py-1 text-sm rounded-full bg-${typeColor} bg-opacity-20 text-${typeColor} border border-${typeColor} border-opacity-30">
-                            ${list.list_type}
-                        </span>
-                        <div class="text-base text-gray-400 mt-2">
-                            ${completedCount}/${totalCount} wykonane
+            <div class="bg-card-bg rounded-lg p-4 sm:p-6 lg:p-8 shadow-xl border border-gray-700 min-h-screen mobile-active-list">
+                <!-- Header section -->
+                <div class="mb-4 sm:mb-6">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                        <div class="flex-1">
+                            <h3 class="text-2xl sm:text-3xl font-bold text-white mb-2">${list.name}</h3>
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span class="inline-block px-3 py-1 text-sm rounded-full bg-${typeColor} bg-opacity-20 text-${typeColor} border border-${typeColor} border-opacity-30 w-fit">
+                                    ${list.list_type}
+                                </span>
+                                <div class="text-base text-gray-400">
+                                    ${completedCount}/${totalCount} wykonane
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Action buttons -->
+                        <div class="flex flex-wrap gap-2 sm:gap-3 justify-start sm:justify-end">
+                            ${sortButton}
+                            ${clearCompletedButton}
+                            <button onclick="app.editList(${list.id})" class="px-3 py-2 text-gray-400 hover:text-neon-blue transition-colors text-base mobile-touch-target bg-gray-700 rounded-md">
+                                ✏️ Edytuj
+                            </button>
+                            <button onclick="app.deleteList(${list.id})" class="px-3 py-2 text-gray-400 hover:text-red-400 transition-colors text-base mobile-touch-target bg-gray-700 rounded-md">
+                                🗑️ Usuń
+                            </button>
                         </div>
                     </div>
-                    <div class="flex gap-3">
-                        ${sortButton}
-                        ${clearCompletedButton}
-                        <button onclick="app.editList(${list.id})" class="px-3 py-1 text-gray-400 hover:text-neon-blue transition-colors text-lg mobile-touch-target">
-                            ✏️
-                        </button>
-                        <button onclick="app.deleteList(${list.id})" class="px-3 py-1 text-gray-400 hover:text-red-400 transition-colors text-lg mobile-touch-target">
-                            🗑️
-                        </button>
-                    </div>
                 </div>
 
-                <div class="mb-8">
-                    <div class="flex gap-3 mb-6">
+                <!-- Add item section -->
+                <div class="mb-6 sm:mb-8">
+                    <div class="flex flex-col sm:flex-row gap-3">
                         <input type="text" id="quick-add-${list.id}" placeholder="Dodaj nowy przedmiot..." 
-                               class="flex-1 px-4 py-3 bg-gray-700 text-white text-lg rounded-lg border border-gray-600 focus:border-${typeColor} focus:outline-none"
+                               class="flex-1 px-4 py-3 bg-gray-700 text-white text-base sm:text-lg rounded-lg border border-gray-600 focus:border-${typeColor} focus:outline-none"
                                onkeypress="app.handleQuickAdd(event, ${list.id})">
-                        <button onclick="app.addItemToList(${list.id})" class="px-6 py-3 bg-gradient-to-r from-${typeColor} to-${typeColor === 'neon-pink' ? 'neon-blue' : 'neon-pink'} text-white text-lg rounded-lg hover:opacity-80 transition-opacity mobile-touch-target">
-                            Dodaj
+                        <button onclick="app.addItemToList(${list.id})" class="px-4 sm:px-6 py-3 bg-gradient-to-r from-${typeColor} to-${typeColor === 'neon-pink' ? 'neon-blue' : 'neon-pink'} text-white text-base sm:text-lg rounded-lg hover:opacity-80 transition-opacity mobile-touch-target whitespace-nowrap">
+                            + Dodaj
                         </button>
                     </div>
                 </div>
 
-                <div class="space-y-3">
+                <!-- Items list -->
+                <div class="space-y-2 sm:space-y-3">
                     ${(list.items || []).map(item => this.renderListItem(item, list.id)).join('')}
                 </div>
             </div>
@@ -247,38 +249,62 @@ class GroceryListApp {
         const isLast = currentIndex === items.length - 1;
         
         return `
-            <div class="flex items-center justify-between p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors draggable-item" 
+            <div class="bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors draggable-item" 
                  draggable="true" 
                  data-item-id="${item.id}" 
                  data-list-id="${listId}">
-                <div class="flex items-center gap-4">
-                    <div class="move-buttons flex flex-col gap-1">
-                        <button onclick="app.moveItemUp(${item.id}, ${listId})" 
-                                class="text-gray-400 hover:text-neon-blue transition-all text-sm mobile-touch-target min-w-[44px] min-h-[44px] flex items-center justify-center ${isFirst ? 'opacity-30 cursor-not-allowed' : ''}" 
-                                ${isFirst ? 'disabled' : ''}>
-                            ▲
+                
+                <!-- Main content row -->
+                <div class="p-4">
+                    <div class="flex items-center gap-3">
+                        <!-- Checkbox -->
+                        <button onclick="app.toggleItem(${item.id}, ${listId})" 
+                                class="text-2xl hover:scale-110 transition-transform mobile-touch-target flex-shrink-0">
+                            ${checkedIcon}
                         </button>
-                        <button onclick="app.moveItemDown(${item.id}, ${listId})" 
-                                class="text-gray-400 hover:text-neon-blue transition-all text-sm mobile-touch-target min-w-[44px] min-h-[44px] flex items-center justify-center ${isLast ? 'opacity-30 cursor-not-allowed' : ''}" 
-                                ${isLast ? 'disabled' : ''}>
-                            ▼
-                        </button>
+                        
+                        <!-- Item name -->
+                        <span class="text-white text-lg ${checkedClass} flex-1 min-w-0 break-words">${item.name}</span>
+                        
+                        <!-- Quick actions -->
+                        <div class="flex gap-2 flex-shrink-0">
+                            <button onclick="app.editItem(${item.id}, ${listId})" 
+                                    class="p-2 text-gray-400 hover:text-neon-blue hover:bg-gray-700 rounded-lg transition-colors mobile-touch-target"
+                                    title="Edytuj">
+                                ✏️
+                            </button>
+                            <button onclick="app.deleteItem(${item.id}, ${listId})" 
+                                    class="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-colors mobile-touch-target"
+                                    title="Usuń">
+                                🗑️
+                            </button>
+                        </div>
                     </div>
-                    <div class="drag-handle cursor-grab text-gray-500 hover:text-gray-300 text-xl">
-                        ⋮⋮
+                    
+                    <!-- Move controls row -->
+                    <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-700">
+                        <div class="flex items-center gap-2">
+                            <div class="drag-handle cursor-grab text-gray-500 hover:text-gray-300 p-1 mobile-touch-target"
+                                 title="Przeciągnij aby zmienić kolejność">
+                                ⋮⋮
+                            </div>
+                            <span class="text-xs text-gray-400 hidden sm:inline">Przeciągnij lub użyj strzałek</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="app.moveItemUp(${item.id}, ${listId})" 
+                                    class="p-2 text-gray-400 hover:text-neon-blue hover:bg-gray-700 rounded transition-all mobile-touch-target ${isFirst ? 'opacity-30 cursor-not-allowed' : ''}" 
+                                    ${isFirst ? 'disabled' : ''}
+                                    title="W górę">
+                                ▲
+                            </button>
+                            <button onclick="app.moveItemDown(${item.id}, ${listId})" 
+                                    class="p-2 text-gray-400 hover:text-neon-blue hover:bg-gray-700 rounded transition-all mobile-touch-target ${isLast ? 'opacity-30 cursor-not-allowed' : ''}" 
+                                    ${isLast ? 'disabled' : ''}
+                                    title="W dół">
+                                ▼
+                            </button>
+                        </div>
                     </div>
-                    <button onclick="app.toggleItem(${item.id}, ${listId})" class="text-2xl hover:scale-110 transition-transform mobile-touch-target">
-                        ${checkedIcon}
-                    </button>
-                    <span class="text-white text-lg ${checkedClass}">${item.name}</span>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="app.editItem(${item.id}, ${listId})" class="text-gray-400 hover:text-neon-blue transition-colors text-lg mobile-touch-target min-w-[44px] min-h-[44px] flex items-center justify-center">
-                        ✏️
-                    </button>
-                    <button onclick="app.deleteItem(${item.id}, ${listId})" class="text-gray-400 hover:text-red-400 transition-colors text-lg mobile-touch-target min-w-[44px] min-h-[44px] flex items-center justify-center">
-                        🗑️
-                    </button>
                 </div>
             </div>
         `;

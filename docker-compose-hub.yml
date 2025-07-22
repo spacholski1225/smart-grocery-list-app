@@ -1,13 +1,24 @@
 version: '3.8'
+
 services:
   backend:
     image: spacholski/grocery-store-list-backend:latest
     ports:
       - "8000:8000"
-  
+    environment:
+      - DATABASE_URL=sqlite:///./grocery_lists.db
+      - OPENAI_API_KEY=KEY
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
   frontend:
     image: spacholski/grocery-store-list-frontend:latest
     ports:
-      - "3000:80"
+      - "8051:80"
     depends_on:
       - backend
+    restart: unless-stopped
+
+volumes:
+  data:

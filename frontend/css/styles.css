@@ -144,6 +144,58 @@ input:focus, select:focus, textarea:focus {
         gap: 1rem;
     }
     
+    /* Mobile improvements for tabs */
+    .mobile-tab-scroll {
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+    
+    /* Better spacing between items on mobile */
+    .space-y-2 > * + * {
+        margin-top: 0.75rem;
+    }
+    
+    /* Improve mobile touch targets */
+    button {
+        min-height: 44px;
+    }
+    
+    /* Better visual hierarchy on mobile */
+    @media (max-width: 480px) {
+        .text-2xl {
+            font-size: 1.5rem;
+        }
+        
+        .text-3xl {
+            font-size: 1.875rem;
+        }
+        
+        /* Improve contrast and readability on small screens */
+        .bg-gray-800 {
+            background-color: #1f2937;
+            border-color: #4b5563;
+        }
+        
+        .text-gray-400 {
+            color: #9ca3af;
+        }
+        
+        /* Better button styling on mobile */
+        button:hover {
+            transform: none; /* Disable hover effects on touch devices */
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        /* Larger text for better readability */
+        .text-lg {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+    }
+    
     /* Responsive grid for mobile */
     .mobile-responsive-grid {
         grid-template-columns: 1fr;
