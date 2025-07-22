@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Zakupów</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-pink': '#ff00ff',
+                        'neon-blue': '#00ffff',
+                        'dark-bg': '#1a1a1a',
+                        'card-bg': '#2a2a2a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="h-full bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div class="min-h-full">
+        <!-- Header -->
+        <header class="bg-dark-bg border-b border-gray-700 shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-6">
+                    <h1 class="text-3xl sm:text-3xl text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-neon-pink to-neon-blue mobile-text-2xl">
+                        Lista Zakupów
+                    </h1>
+                    <div class="flex gap-3">
+                        <button id="add-list-btn" class="bg-gradient-to-r from-neon-pink to-neon-blue hover:from-pink-500 hover:to-cyan-400 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 mobile-touch-target">
+                            + Nowa Lista
+                        </button>
+                        <button id="convert-text-btn" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 mobile-touch-target">
+                            🤖 Konwertuj Tekst
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="bg-dark-bg border-b border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mobile-tab-container">
+                <nav id="tabs-nav" class="flex space-x-1 overflow-x-auto py-2 mobile-tab-scroll">
+                    <!-- Zakładki będą tu wstawione -->
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="main-content" class="transition-all duration-300">
+            <main id="main-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 transition-all duration-300">
+                <!-- Active List Container -->
+                <div id="active-list-container" class="transition-all duration-300">
+                    <!-- Aktywna lista będzie tu wyświetlana -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="text-center py-12 hidden">
+                    <div class="text-6xl mb-4">📝</div>
+                    <h2 class="text-2xl font-semibold text-gray-300 mb-2 mobile-text-xl">Brak list zakupów</h2>
+                    <p class="text-gray-500 mb-6">Stwórz swoją pierwszą listę, aby rozpocząć organizowanie zakupów</p>
+                    <button class="bg-gradient-to-r from-neon-pink to-neon-blue hover:from-pink-500 hover:to-cyan-400 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 mobile-touch-target">
+                        Stwórz pierwszą listę
+                    </button>
+                </div>
+
+                <!-- Welcome State -->
+                <div id="welcome-state" class="text-center py-12 hidden">
+                    <div class="text-6xl mb-4">👈</div>
+                    <h2 class="text-2xl font-semibold text-gray-300 mb-2 mobile-text-xl">Wybierz listę z boku</h2>
+                    <p class="text-gray-500 mb-6">Kliknij na jedną z list w panelu bocznym, aby zobaczyć jej zawartość</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add/Edit List Modal -->
+    <div id="list-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-card-bg rounded-lg p-6 w-full max-w-md mobile-modal-spacing">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-semibold text-white">Nowa Lista</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form id="list-form">
+                <div class="mb-4">
+                    <label for="list-name" class="block text-sm font-medium text-gray-300 mb-2">Nazwa listy</label>
+                    <input type="text" id="list-name" class="w-full px-3 py-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:border-neon-blue focus:outline-none" required>
+                </div>
+                <div class="mb-6">
+                    <label for="list-type" class="block text-sm font-medium text-gray-300 mb-2">Typ listy</label>
+                    <select id="list-type" class="w-full px-3 py-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:border-neon-blue focus:outline-none">
+                        <option value="zakupy">Zakupy</option>
+                        <option value="inne">Inne</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 mobile-btn-stack">
+                    <button type="button" id="cancel-btn" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition-colors mobile-touch-target">
+                        Anuluj
+                    </button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-gradient-to-r from-neon-pink to-neon-blue hover:from-pink-500 hover:to-cyan-400 text-white rounded-md transition-all duration-300 mobile-touch-target">
+                        Zapisz
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div id="item-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-card-bg rounded-lg p-6 w-full max-w-md mobile-modal-spacing">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="item-modal-title" class="text-xl font-semibold text-white">Dodaj Przedmiot</h3>
+                <button id="close-item-modal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form id="item-form">
+                <div class="mb-4">
+                    <label for="item-name" class="block text-sm font-medium text-gray-300 mb-2">Nazwa przedmiotu</label>
+                    <input type="text" id="item-name" class="w-full px-3 py-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:border-neon-blue focus:outline-none" required>
+                    <div id="suggestions" class="mt-2 bg-gray-700 rounded-md hidden"></div>
+                </div>
+                <div class="flex gap-3 mobile-btn-stack">
+                    <button type="button" id="cancel-item-btn" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition-colors mobile-touch-target">
+                        Anuluj
+                    </button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-gradient-to-r from-neon-pink to-neon-blue hover:from-pink-500 hover:to-cyan-400 text-white rounded-md transition-all duration-300 mobile-touch-target">
+                        Dodaj
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Convert Text to List Modal -->
+    <div id="convert-text-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-card-bg rounded-lg p-6 w-full max-w-lg mobile-modal-spacing">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-white">🤖 Konwertuj Tekst na Listę</h3>
+                <button id="close-convert-modal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form id="convert-text-form">
+                <div class="mb-4">
+                    <label for="convert-text-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Wklej tekst do konwersji (np. przepis, notatka, lista zadań)
+                    </label>
+                    <textarea id="convert-text-input" 
+                              class="w-full px-3 py-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:border-neon-blue focus:outline-none" 
+                              rows="8" 
+                              placeholder="Wklej tutaj tekst, który ma zostać przekonwertowany na listę zakupów...&#10;&#10;Przykład:&#10;Dziś robimy spaghetti bolognese. Potrzebuję mięsa mielonego, pomidorów w puszce, cebuli, czosnku i oliwy. Do tego makaron spaghetti i parmezan."
+                              required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="convert-list-name" class="block text-sm font-medium text-gray-300 mb-2">Nazwa nowej listy</label>
+                    <input type="text" id="convert-list-name" 
+                           class="w-full px-3 py-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:border-neon-blue focus:outline-none" 
+                           placeholder="Lista z AI" required>
+                </div>
+                <div class="flex gap-3 mobile-btn-stack">
+                    <button type="button" id="cancel-convert-btn" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition-colors mobile-touch-target">
+                        Anuluj
+                    </button>
+                    <button type="submit" id="convert-submit-btn" class="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-md transition-all duration-300 mobile-touch-target">
+                        <span id="convert-btn-text">🤖 Konwertuj</span>
+                        <div id="convert-loading" class="loading-spinner hidden inline-block ml-2"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

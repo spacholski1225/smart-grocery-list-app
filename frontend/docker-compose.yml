@@ -1,0 +1,30 @@
+services:
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+    networks:
+      - grocery-network
+
+  backend:
+    build: ../backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./grocery_lists.db
+    volumes:
+      - grocery_data:/app/data
+    networks:
+      - grocery-network
+
+volumes:
+  grocery_data:
+
+networks:
+  grocery-network:
+    driver: bridge

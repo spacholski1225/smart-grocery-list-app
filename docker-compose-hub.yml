@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  backend:
+    image: spacholski/grocery-store-list-backend:latest
+    ports:
+      - "8000:8000"
+  
+  frontend:
+    image: spacholski/grocery-store-list-frontend:latest
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

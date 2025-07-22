@@ -1,0 +1,289 @@
+/* Custom styles to enhance Tailwind CSS */
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #374151;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #ff00ff, #00ffff);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #e600e6, #00cccc);
+}
+
+/* Enhanced hover effects */
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.hover-glow-blue:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+/* Smooth animations */
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-up {
+    animation: slideUp 0.3s ease-in-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced gradient backgrounds */
+.gradient-bg-pink {
+    background: linear-gradient(135deg, rgba(255, 0, 255, 0.1) 0%, rgba(255, 0, 255, 0.05) 100%);
+}
+
+.gradient-bg-blue {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(0, 255, 255, 0.05) 100%);
+}
+
+/* Custom focus styles */
+input:focus, select:focus, textarea:focus {
+    ring-width: 2px;
+    ring-color: rgba(0, 255, 255, 0.5);
+    border-color: #00ffff;
+}
+
+/* Mobile responsiveness enhancements */
+@media (max-width: 640px) {
+    .mobile-stack {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .mobile-full-width {
+        width: 100%;
+    }
+    
+    .mobile-text-sm {
+        font-size: 0.875rem;
+    }
+    
+    /* Responsive text sizes for mobile */
+    .mobile-text-xl {
+        font-size: 1.25rem;
+    }
+    
+    .mobile-text-2xl {
+        font-size: 1.5rem;
+    }
+    
+    .mobile-text-3xl {
+        font-size: 1.875rem;
+    }
+    
+    /* Touch targets - minimum 44px height */
+    .mobile-touch-target {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Stack buttons vertically on small screens */
+    .mobile-btn-stack {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    /* Better modal spacing on mobile */
+    .mobile-modal-spacing {
+        margin: 1rem;
+        max-width: calc(100vw - 2rem);
+    }
+    
+    /* Improved tab navigation on mobile */
+    .mobile-tab-container {
+        padding: 0.5rem 1rem;
+    }
+    
+    .mobile-tab-scroll {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .mobile-tab-scroll::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Better spacing for mobile item lists */
+    .mobile-item-spacing {
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    /* Responsive grid for mobile */
+    .mobile-responsive-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Better input sizing on mobile */
+    input[type="text"], select, textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+        min-height: 44px;
+    }
+    
+    /* Better modal positioning on very small screens */
+    @media (max-height: 600px) {
+        .mobile-modal-spacing {
+            margin: 0.5rem;
+            max-width: calc(100vw - 1rem);
+            max-height: calc(100vh - 1rem);
+            overflow-y: auto;
+        }
+    }
+}
+
+/* Loading spinner */
+.loading-spinner {
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top: 3px solid #ff00ff;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Enhanced button styles */
+.btn-neon {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-neon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-neon:hover::before {
+    left: 100%;
+}
+
+/* Glassmorphism effect */
+.glass {
+    backdrop-filter: blur(10px);
+    background: rgba(42, 42, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Pulsing effect for active items */
+.pulse-neon {
+    animation: pulseNeon 2s infinite;
+}
+
+@keyframes pulseNeon {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 0, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 255, 0);
+    }
+}
+
+/* Drag and drop styles */
+.draggable-item {
+    transition: all 0.2s ease;
+}
+
+.draggable-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 255, 0.2);
+}
+
+.draggable-item.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+    z-index: 1000;
+}
+
+.drag-handle {
+    cursor: grab;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.drag-handle:hover {
+    color: #00ffff !important;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Drop zone indicator */
+.drop-indicator {
+    border: 2px dashed #00ffff;
+    background-color: rgba(0, 255, 255, 0.1);
+    animation: pulse-border 1s infinite;
+}
+
+@keyframes pulse-border {
+    0% {
+        border-color: rgba(0, 255, 255, 0.5);
+    }
+    50% {
+        border-color: rgba(0, 255, 255, 1);
+    }
+    100% {
+        border-color: rgba(0, 255, 255, 0.5);
+    }
+}
+
+/* Move buttons */
+.move-buttons button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.move-buttons button:not(:disabled):hover {
+    transform: scale(1.2);
+    color: #00ffff;
+}
