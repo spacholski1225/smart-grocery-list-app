@@ -84,3 +84,56 @@ class ListService:
             return db_list
         except Exception:
             return db_list
+
+    def reorder_list_items(self, list_id: int, item_updates: List[schemas.ItemPositionUpdate]) -> Optional[GroceryList]:
+        """
+        Reorder items in a list based on provided position updates
+        """
+        # Check if list exists
+        db_list = self.db.query(GroceryList).filter(GroceryList.id == list_id).first()
+        if not db_list:
+            return None
+        
+        # Get all items for this list
+        items = self.db.query(ListItem).filter(ListItem.list_id == list_id).all()
+        item_dict = {item.id: item for item in items}
+        
+        # Update positions for items that are in the update request
+        for update in item_updates:
+            if update.id in item_dict:
+                item_dict[update.id].position = update.position
+        
+        try:
+            self.db.commit()
+            self.db.refresh(db_list)
+            return db_list
+        except Exception as e:
+            self.db.rollback()
+            print(f"Error reordering items: {e}")
+            return None
+
+    def clear_completed_items(self, list_id: int) -> Optional[GroceryList]:
+        """
+        Remove all completed (checked) items from a list
+        """
+        # Check if list exists
+        db_list = self.db.query(GroceryList).filter(GroceryList.id == list_id).first()
+        if not db_list:
+            return None
+        
+        # Delete all completed items for this list
+        try:
+            deleted_count = self.db.query(ListItem).filter(
+                ListItem.list_id == list_id,
+                ListItem.is_checked == True
+            ).delete()
+            
+            print(f"Deleted {deleted_count} completed items from list {list_id}")
+            
+            self.db.commit()
+            self.db.refresh(db_list)
+            return db_list
+        except Exception as e:
+            self.db.rollback()
+            print(f"Error clearing completed items: {e}")
+            return None

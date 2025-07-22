@@ -90,3 +90,32 @@ def sort_list(
         print(f"[SORT ENDPOINT] Sorted items: {sorted_items_names}")
     
     return sorted_list
+
+@router.put("/{list_id}/reorder", response_model=schemas.GroceryList)
+def reorder_list_items(
+    list_id: int,
+    reorder_data: schemas.ReorderRequest,
+    db: Session = Depends(get_db)
+):
+    service = ListService(db)
+    updated_list = service.reorder_list_items(list_id, reorder_data.items)
+    if not updated_list:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="List not found"
+        )
+    return updated_list
+
+@router.delete("/{list_id}/clear-completed", response_model=schemas.GroceryList)
+def clear_completed_items(
+    list_id: int,
+    db: Session = Depends(get_db)
+):
+    service = ListService(db)
+    updated_list = service.clear_completed_items(list_id)
+    if not updated_list:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="List not found"
+        )
+    return updated_list

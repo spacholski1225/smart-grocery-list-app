@@ -64,3 +64,10 @@ class ItemSuggestion(ItemSuggestionBase):
 
 class SortRequest(BaseModel):
     list_id: int
+
+class ItemPositionUpdate(BaseModel):
+    id: int
+    position: int
+
+class ReorderRequest(BaseModel):
+    items: List[ItemPositionUpdate]

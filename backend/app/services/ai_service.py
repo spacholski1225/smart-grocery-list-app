@@ -82,11 +82,9 @@ Kolejność kategorii została oparta na oryginalnym układzie sklepu i musi by�
                 temperature=0
             )
             
-            # Usuń markdown code blocks jeśli są obecne
             content = response.choices[0].message.content.strip()
             if content.startswith('```'):
                 lines = content.split('\n')
-                # Usuń pierwszą linię z ``` i ostatnią jeśli zawiera ```
                 lines = lines[1:]
                 if lines and lines[-1].strip() == '```':
                     lines = lines[:-1]
@@ -94,11 +92,9 @@ Kolejność kategorii została oparta na oryginalnym układzie sklepu i musi by�
             
             sorted_items = [item.strip() for item in content.split('\n') if item.strip()]
             
-            # Sprawdzenie czy wszystkie elementy z oryginalnej listy są w posortowanej
             original_items_set = set(items)
             sorted_items_set = set(sorted_items)
             
-            # Zwróć posortowaną listę tylko jeśli zawiera dokładnie te same elementy
             if (len(sorted_items) == len(items) and 
                 original_items_set == sorted_items_set):
                 return sorted_items
@@ -106,3 +102,98 @@ Kolejność kategorii została oparta na oryginalnym układzie sklepu i musi by�
                 return items
         except Exception:
             return items
+
+    def extract_grocery_items(self, text: str) -> List[str]:
+        """Extract grocery items from text using OpenAI"""
+        if not self.client or not text.strip():
+            return []
+
+        system_prompt = """
+Przeanalizuj dokładnie podany tekst i wyodrębnij z niego wszystkie produkty spożywcze oraz artykuły gospodarstwa domowego, które można kupić w sklepie.
+KATEGORIE PRODUKTÓW DO UWZGLĘDNIENIA:
+Produkty świeże:
+
+Mięso i wędliny (wołowina, wieprzowina, drób, kiełbasa)
+Ryby i owoce morza (świeże, mrożone, węzone)
+Warzywa (świeże, mrożone, w puszkach)
+Owoce (świeże, suszone, mrożone)
+Nabiał (mleko, jogurt, ser, masło, śmietana, twaróg)
+Jaja
+
+Produkty suche i spiżarniane:
+
+Zboza i przetwory zbożowe (ryż, kasza, płatki, muesli)
+Makarony wszystkich rodzajów
+Mąka, cukier, sól, drożdże, proszek do pieczenia
+Oleje, octy, sosy, przyprawy, zioła
+Konserwy (warzywa, owoce, mięso, ryby)
+Przetwory (dżemy, miody, pasty, koncentraty)
+
+Napoje:
+
+Wszystkie rodzaje napojów (soki, woda, herbata, kawa, napoje gazowane)
+
+Artykuły higieniczne i gospodarstwa domowego:
+
+Środki czystości i higieny osobistej
+Kosmetyki podstawowe dostępne w sklepach spożywczych
+Artykuły papierowe (ręczniki, chusteczki, papier toaletowy)
+
+CO POMIJAĆ:
+❌ Sprzęt i narzędzia kuchenne: garnki, patelnie, noże, miksery, blendery, piekarniki
+❌ Meble i wyposażenie: stoły, krzesła, półki, pojemniki do przechowywania
+❌ Ubrania i tekstylia: fartuchy, ściereczki, rękawice kuchenne (jako sprzęt)
+❌ Urządzenia elektroniczne: wagi, termometry, timery
+ZASADY FORMATOWANIA:
+
+Używaj wyłącznie polskich nazw produktów
+Jeden produkt w każdej linii
+Bez numeracji, myślników ani innych oznaczeń
+Maksymalnie 20 pozycji - wybieraj najważniejsze
+Grupuj podobne produkty (np. "pomidory" zamiast "pomidory czerwone, pomidory żółte")
+Używaj nazw rodzajowych (np. "ser" zamiast konkretnych marek)
+
+FORMAT ODPOWIEDZI:
+produkt1
+produkt2
+produkt3
+...
+PRZYPADKI SZCZEGÓLNE:
+
+Brak produktów spożywczych w tekście: zwróć pustą listę
+Przepisy kulinarne: wyodrębnij tylko składniki, pomiń instrukcje i narzędzia
+Listy mieszane: wybierz tylko produkty spożywcze i artykuły gospodarstwa domowego
+Synonimy: używaj najczęściej stosowanych polskich nazw
+
+Analizuj tekst uważnie, zwracając szczególną uwagę na kontekst, aby odróżnić produkty spożywcze od innych przedmiotów.
+"""
+
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"Tekst do analizy:\n{text}"}
+                ],
+                temperature=0
+            )
+            
+            content = response.choices[0].message.content.strip()
+            if content.startswith('```'):
+                lines = content.split('\n')
+                lines = lines[1:]
+                if lines and lines[-1].strip() == '```':
+                    lines = lines[:-1]
+                content = '\n'.join(lines)
+            
+            import re
+            items = [item.strip() for item in content.split('\n') if item.strip()]
+            items = [item for item in items if not re.match(r'^\d+\.|^-|^\*', item)]
+            items = [re.sub(r'^[-*]\s*', '', item) for item in items]
+            items = items[:20]
+            
+            return items
+            
+        except Exception as e:
+            print(f"Error in extract_grocery_items: {e}")
+            return []

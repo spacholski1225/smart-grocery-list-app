@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.database.database import engine, create_tables
-from app.routers import lists, items
+from app.routers import lists, items, ai
 
 def create_application() -> FastAPI:
     application = FastAPI(
@@ -21,6 +21,7 @@ def create_application() -> FastAPI:
 
     application.include_router(lists.router, prefix="/api/v1/lists", tags=["lists"])
     application.include_router(items.router, prefix="/api/v1/items", tags=["items"])
+    application.include_router(ai.router, prefix="/api/v1", tags=["ai"])
 
     return application
 
